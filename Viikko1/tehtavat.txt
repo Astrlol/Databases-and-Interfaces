@@ -1,0 +1,164 @@
+mysql> -- OSA 1
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> -- a) Poista Puffball
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> DELETE FROM pet WHERE name = 'Puffball';
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> -- b) Bowserin syntymäaika
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> UPDATE pet SET birth = '1998-08-31' WHERE name = 'Bowser';
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 1  Changed: 0  Warnings: 0
+
+mysql> -- c) Chirpyn kuolinpäivä
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> UPDATE pet SET death = '2000-09-15' WHERE name = 'Chirpy';
+Query OK, 0 rows affected (0.00 sec)
+Rows matched: 1  Changed: 0  Warnings: 0
+
+mysql> -- d) 1990-luvulla syntyneet
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT * FROM pet WHERE birth BETWEEN '1990-01-01' AND '1999-12-31';
++----------+--------+---------+------+------------+------------+
+| name     | owner  | species | sex  | birth      | death      |
++----------+--------+---------+------+------------+------------+
+| Fluffy   | Harold | cat     | f    | 1993-02-04 | NULL       |
+| Claws    | Gwen   | cat     | m    | 1994-03-17 | NULL       |
+| Fang     | Benny  | dog     | m    | 1990-08-27 | NULL       |
+| Bowser   | Diane  | dog     | m    | 1998-08-31 | 1995-07-29 |
+| Chirpy   | Gwen   | bird    | f    | 1998-09-11 | 2000-09-15 |
+| Whistler | Gwen   | bird    | NULL | 1997-12-09 | NULL       |
+| Slim     | Benny  | snake   | m    | 1996-04-29 | NULL       |
++----------+--------+---------+------+------------+------------+
+7 rows in set (0.00 sec)
+
+mysql> -- e) Miespuoliset koirat
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT * FROM pet WHERE species = 'dog' AND sex = 'm';
++--------+-------+---------+------+------------+------------+
+| name   | owner | species | sex  | birth      | death      |
++--------+-------+---------+------+------------+------------+
+| Fang   | Benny | dog     | m    | 1990-08-27 | NULL       |
+| Bowser | Diane | dog     | m    | 1998-08-31 | 1995-07-29 |
++--------+-------+---------+------+------------+------------+
+2 rows in set (0.00 sec)
+
+mysql> -- f) Miespuolisten koirien nimet
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT name FROM pet WHERE species = 'dog' AND sex = 'm';
++--------+
+| name   |
++--------+
+| Fang   |
+| Bowser |
++--------+
+2 rows in set (0.00 sec)
+
+mysql> -- g) Miespuolisten koirien nimet ja omistajat
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT name, owner FROM pet WHERE species = 'dog' AND sex = 'm';
++--------+-------+
+| name   | owner |
++--------+-------+
+| Fang   | Benny |
+| Bowser | Diane |
++--------+-------+
+2 rows in set (0.00 sec)
+
+mysql> 
+mysql> -- OSA 2
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> -- a) Omistajat kerran
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT DISTINCT owner FROM pet;
++--------+
+| owner  |
++--------+
+| Harold |
+| Gwen   |
+| Benny  |
+| Diane  |
++--------+
+4 rows in set (0.00 sec)
+
+mysql> -- b) Nimet aakkosjärjestyksessä
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT name FROM pet ORDER BY name;
++----------+
+| name     |
++----------+
+| Bowser   |
+| Buffy    |
+| Chirpy   |
+| Claws    |
+| Fang     |
+| Fluffy   |
+| Slim     |
+| Whistler |
++----------+
+8 rows in set (0.00 sec)
+
+mysql> -- c) Elossa olevat
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT * FROM pet WHERE death IS NULL;
++----------+--------+---------+------+------------+-------+
+| name     | owner  | species | sex  | birth      | death |
++----------+--------+---------+------+------------+-------+
+| Fluffy   | Harold | cat     | f    | 1993-02-04 | NULL  |
+| Claws    | Gwen   | cat     | m    | 1994-03-17 | NULL  |
+| Buffy    | Harold | dog     | f    | 1989-05-13 | NULL  |
+| Fang     | Benny  | dog     | m    | 1990-08-27 | NULL  |
+| Whistler | Gwen   | bird    | NULL | 1997-12-09 | NULL  |
+| Slim     | Benny  | snake   | m    | 1996-04-29 | NULL  |
++----------+--------+---------+------+------------+-------+
+6 rows in set (0.00 sec)
+
+mysql> -- d) Omistajat, joiden nimi alkaa H:lla
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT DISTINCT owner FROM pet WHERE owner LIKE 'H%';
++--------+
+| owner  |
++--------+
+| Harold |
++--------+
+1 row in set (0.00 sec)
+
+mysql> -- e) Nimessä ff
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT name FROM pet WHERE name LIKE '%ff%';
++--------+
+| name   |
++--------+
+| Fluffy |
+| Buffy  |
++--------+
+2 rows in set (0.00 sec)
+
+mysql> -- f) Nimessä 4 kirjainta
+Query OK, 0 rows affected (0.00 sec)
+
+mysql> SELECT name FROM pet WHERE name LIKE '____';
++------+
+| name |
++------+
+| Fang |
+| Slim |
++------+
+2 rows in set (0.00 sec)
+
+mysql> notee
