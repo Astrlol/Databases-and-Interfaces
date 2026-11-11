@@ -1,0 +1,156 @@
+Pet ja owner -taulut
+
+Muuta aikaisemmin tehdyn pet-taulun rakenne oppimateriaalissa esitetyn kaltaiseksi,
+eli meillä on kaksi taulua, pet ja owner ja niiden välillä yhdestä moneen-yhteys.
+Esitä vastauksessasi tarvittavat SQL-lauseet sekä taulujen rakenne DESC-lauseella.
+
+
+1) Lähtötilanne: pet-taulu ennen muutoksia
+
+
+mysql> SELECT * FROM pet;
++----------+--------+---------+------+------------+------------+
+| name     | owner  | species | sex  | birth      | death      |
++----------+--------+---------+------+------------+------------+
+| Fluffy   | Harold | cat     | f    | 1993-02-04 | NULL       |
+| Claws    | Gwen   | cat     | m    | 1994-03-17 | NULL       |
+| Buffy    | Harold | dog     | f    | 1989-05-13 | NULL       |
+| Fang     | Benny  | dog     | m    | 1990-08-27 | NULL       |
+| Bowser   | Diane  | dog     | m    | 1998-08-31 | 1995-07-29 |
+| Chirpy   | Gwen   | bird    | f    | 1998-09-11 | 2000-09-15 |
+| Whistler | Gwen   | bird    | NULL | 1997-12-09 | NULL       |
+| Slim     | Benny  | snake   | m    | 1996-04-29 | NULL       |
++----------+--------+---------+------+------------+------------+
+8 rows in set (0.00 sec)
+
+
+
+2) Owner-taulun luonti
+
+
+mysql> CREATE TABLE owner (
+    -> first_name VARCHAR(20),
+    -> last_name VARCHAR(20),
+    -> address VARCHAR(50),
+    -> ownerID int NOT NULL PRIMARY KEY AUTO_INCREMENT
+    -> );
+Query OK, 0 rows affected (0.02 sec)
+
+
+
+3) Pet-taulun rakenteen muutokset
+
+
+mysql> ALTER TABLE pet DROP COLUMN owner;
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE pet ADD COLUMN petID INT PRIMARY KEY AUTO_INCREMENT;
+Query OK, 0 rows affected (0.05 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE pet ADD COLUMN ownerID INT;
+Query OK, 0 rows affected (0.02 sec)
+Records: 0  Duplicates: 0  Warnings: 0
+
+mysql> ALTER TABLE pet ADD CONSTRAINT FOREIGN KEY(ownerID) REFERENCES owner(ownerID);
+Query OK, 8 rows affected (0.05 sec)
+Records: 8  Duplicates: 0  Warnings: 0
+
+
+
+4) Omistajien lisääminen owner-tauluun
+
+
+mysql> INSERT INTO owner VALUES ( 'Harold','Lloyd','Someaddress 1',NULL),
+    -> ( 'Gwen','Stefani','Someaddress 2',NULL),
+    -> ( 'Benny','Hill','Someaddress 3',NULL),
+    -> ( 'Diane','Keaton','Someaddress 4',NULL);
+Query OK, 4 rows affected (0.01 sec)
+Records: 4  Duplicates: 0  Warnings: 0
+
+mysql> select * from owner;
++------------+-----------+---------------+---------+
+| first_name | last_name | address       | ownerID |
++------------+-----------+---------------+---------+
+| Harold     | Lloyd     | Someaddress 1 |       1 |
+| Gwen       | Stefani   | Someaddress 2 |       2 |
+| Benny      | Hill      | Someaddress 3 |       3 |
+| Diane      | Keaton    | Someaddress 4 |       4 |
++------------+-----------+---------------+---------+
+4 rows in set (0.00 sec)
+
+
+
+5) Omistajien liittäminen lemmikkeihin
+
+
+mysql> UPDATE pet SET ownerID=1 WHERE name = 'Fluffy';
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE pet SET ownerID=1 WHERE name='Buffy';
+Query OK, 1 row affected (0.01 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+mysql> UPDATE pet SET ownerID = 2 WHERE name = 'Claws' OR name = 'Chirpy' OR name = 'Whistler';
+Query OK, 3 rows affected (0.00 sec)
+Rows matched: 3  Changed: 3  Warnings: 0
+
+mysql> UPDATE pet SET ownerID = 3 WHERE name = 'Fang' OR name = 'Slim';
+Query OK, 2 rows affected (0.00 sec)
+Rows matched: 2  Changed: 2  Warnings: 0
+
+mysql> UPDATE pet SET ownerID=4 WHERE name='Bowser';
+Query OK, 1 row affected (0.00 sec)
+Rows matched: 1  Changed: 1  Warnings: 0
+
+
+
+6) Tarkistus: lemmikit ja omistajat JOINilla
+
+
+mysql> SELECT first_name, name FROM pet JOIN owner ON pet.ownerID = owner.ownerID;
++------------+----------+
+| first_name | name     |
++------------+----------+
+| Harold     | Fluffy   |
+| Harold     | Buffy    |
+| Gwen       | Claws    |
+| Gwen       | Chirpy   |
+| Gwen       | Whistler |
+| Benny      | Fang     |
+| Benny      | Slim     |
+| Diane      | Bowser   |
++------------+----------+
+8 rows in set (0.00 sec)
+
+
+
+7) Taulujen rakenne DESC-lauseella
+
+
+mysql> DESC owner;
++------------+-------------+------+-----+---------+----------------+
+| Field      | Type        | Null | Key | Default | Extra          |
++------------+-------------+------+-----+---------+----------------+
+| first_name | varchar(20) | YES  |     | NULL    |                |
+| last_name  | varchar(20) | YES  |     | NULL    |                |
+| address    | varchar(50) | YES  |     | NULL    |                |
+| ownerID    | int         | NO   | PRI | NULL    | auto_increment |
++------------+-------------+------+-----+---------+----------------+
+4 rows in set (0.00 sec)
+
+mysql> DESC pet;
++---------+-------------+------+-----+---------+----------------+
+| Field   | Type        | Null | Key | Default | Extra          |
++---------+-------------+------+-----+---------+----------------+
+| name    | varchar(20) | YES  |     | NULL    |                |
+| species | varchar(20) | YES  |     | NULL    |                |
+| sex     | char(1)     | YES  |     | NULL    |                |
+| birth   | date        | YES  |     | NULL    |                |
+| death   | date        | YES  |     | NULL    |                |
+| petID   | int         | NO   | PRI | NULL    | auto_increment |
+| ownerID | int         | YES  | MUL | NULL    |                |
++---------+-------------+------+-----+---------+----------------+
+7 rows in set (0.00 sec)
