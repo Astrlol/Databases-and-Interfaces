@@ -1,0 +1,80 @@
+Arviointitietokanta, kyselyt
+
+1) Tulosta kaikki opiskelijat, joilla on tietokannassa hylätty arvosana
+
+
+mysql> SELECT Etunimi, Sukunimi, Arvosana
+    -> FROM opiskelija
+    -> JOIN arviointi USING(idOpiskelija)
+    -> WHERE arvosana = 0;
++---------+----------+----------+
+| Etunimi | Sukunimi | Arvosana |
++---------+----------+----------+
+| Aku     | Ankka    |        0 |
++---------+----------+----------+
+1 row in set (0.00 sec)
+
+
+
+2) Tulosta kaikki Linux-hallinta-kurssin hyväksytysti suorittaneet
+
+
+mysql> SELECT Etunimi, Sukunimi, Arvosana
+    -> FROM Arviointi
+    -> JOIN Opiskelija USING(idOpiskelija)
+    -> JOIN Opintojakso USING(idOpintojakso)
+    -> WHERE Nimi = 'Linux-hallinta' AND Arvosana > 0;
++---------+----------+----------+
+| Etunimi | Sukunimi | Arvosana |
++---------+----------+----------+
+| Aku     | Ankka    |        2 |
+| Mikki   | Hiiri    |        4 |
++---------+----------+----------+
+2 rows in set (0.00 sec)
+
+
+
+3) Mille kursseille Hessu on osallistunut ?
+
+
+mysql> SELECT Nimi
+    -> FROM Opintojakso
+    -> JOIN Arviointi USING(idOpintojakso)
+    -> JOIN Opiskelija USING(idOpiskelija)
+    -> WHERE Etunimi = 'Hessu';
++---------------------------+
+| Nimi                      |
++---------------------------+
+| Olio-ohjelmointi          |
+| Tietokannat ja rajapinnat |
++---------------------------+
+2 rows in set (0.00 sec)
+
+
+
+4) Mikä on Akun opintosuoritusten keskiarvo ?
+
+
+mysql> SELECT AVG(Arvosana)
+    -> FROM Arviointi
+    -> JOIN Opiskelija USING(idOpiskelija)
+    -> WHERE Etunimi = 'Aku';
++---------------+
+| AVG(Arvosana) |
++---------------+
+|        1.6667 |
++---------------+
+1 row in set (0.00 sec)
+
+
+
+5) Millä opintojaksoilla ei ole yhtään suoritusmerkintää ?
+
+
+mysql> SELECT Nimi
+    -> FROM Opintojakso
+    -> LEFT JOIN Arviointi USING(idOpintojakso)
+    -> WHERE idArviointi IS NULL;
+Empty set (0.00 sec)
+
+Kaikilla opintojaksoilla on vähintään yksi suoritusmerkintä, joten tulos on tyhjä.

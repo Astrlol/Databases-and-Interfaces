@@ -1,0 +1,86 @@
+Arviointitietokanta
+
+Tee oheisen ER-diagrammin mukainen arviointitietokanta. Syötä kuhunkin tauluun muutama tietue.
+ER-diagrammi on tiedostossa er_diagrammi.png ja taulujen luontilauseet tiedostossa arviointi.sql.
+
+
+Opintojakso
+
+
+mysql> SELECT * FROM Opintojakso;
++---------------+----------+---------+---------------------------+
+| idOpintojakso | Koodi    | Laajuus | Nimi                      |
++---------------+----------+---------+---------------------------+
+|             1 | IN00CT05 |       5 | Tietokannat ja rajapinnat |
+|             2 | IN00CT06 |       5 | Linux-hallinta            |
+|             3 | IN00CT07 |       5 | Olio-ohjelmointi          |
+|             4 | IN00CT08 |       3 | Matematiikka 2            |
+|             5 | IN00CT09 |       3 | Ruotsin kieli             |
++---------------+----------+---------+---------------------------+
+5 rows in set (0.00 sec)
+
+
+
+Opiskelija
+
+
+mysql> SELECT * FROM Opiskelija;
++--------------+---------+----------+----------------+--------------+
+| idOpiskelija | Etunimi | Sukunimi | Osoite         | Luokkatunnus |
++--------------+---------+----------+----------------+--------------+
+|            1 | Aku     | Ankka    | Ankkalinna 313 | TVT25SPO     |
+|            2 | Roope   | Ankka    | Ankkalinna 1   | TVT25SPO     |
+|            3 | Iines   | Ankka    | Ankkalinna 315 | TVT25SPL     |
+|            4 | Mikki   | Hiiri    | Ankkalinna 316 | TVT25SPL     |
+|            5 | Hessu   | Hopo     | Ankkalinna 317 | TVT25SPO     |
++--------------+---------+----------+----------------+--------------+
+5 rows in set (0.00 sec)
+
+
+
+Arviointi
+
+
+mysql> SELECT * FROM Arviointi;
++-------------+------------+----------+--------------+---------------+
+| idArviointi | Paivamaara | Arvosana | idOpiskelija | idOpintojakso |
++-------------+------------+----------+--------------+---------------+
+|           1 | 2026-11-10 |        3 |            1 |             1 |
+|           2 | 2026-11-12 |        2 |            1 |             2 |
+|           3 | 2026-11-14 |        0 |            1 |             5 |
+|           4 | 2026-11-10 |        5 |            2 |             1 |
+|           5 | 2026-11-12 |        4 |            2 |             3 |
+|           6 | 2026-11-10 |        4 |            3 |             1 |
+|           7 | 2026-11-14 |        3 |            3 |             4 |
+|           8 | 2026-11-10 |        5 |            4 |             1 |
+|           9 | 2026-11-12 |        4 |            4 |             2 |
+|          10 | 2026-11-12 |        5 |            5 |             3 |
+|          11 | 2026-11-10 |        1 |            5 |             1 |
++-------------+------------+----------+--------------+---------------+
+11 rows in set (0.00 sec)
+
+
+
+Arvioinnit opiskelijoiden ja opintojaksojen nimillä (JOIN)
+
+
+mysql> SELECT Etunimi, Sukunimi, Arvosana, Paivamaara, Nimi
+    -> FROM Arviointi
+    -> JOIN Opiskelija USING(idOpiskelija)
+    -> JOIN Opintojakso USING(idOpintojakso);
++---------+----------+----------+------------+---------------------------+
+| Etunimi | Sukunimi | Arvosana | Paivamaara | Nimi                      |
++---------+----------+----------+------------+---------------------------+
+| Aku     | Ankka    |        3 | 2026-11-10 | Tietokannat ja rajapinnat |
+| Aku     | Ankka    |        2 | 2026-11-12 | Linux-hallinta            |
+| Aku     | Ankka    |        0 | 2026-11-14 | Ruotsin kieli             |
+| Roope   | Ankka    |        5 | 2026-11-10 | Tietokannat ja rajapinnat |
+| Roope   | Ankka    |        4 | 2026-11-12 | Olio-ohjelmointi          |
+| Iines   | Ankka    |        4 | 2026-11-10 | Tietokannat ja rajapinnat |
+| Iines   | Ankka    |        3 | 2026-11-14 | Matematiikka 2            |
+| Mikki   | Hiiri    |        5 | 2026-11-10 | Tietokannat ja rajapinnat |
+| Mikki   | Hiiri    |        4 | 2026-11-12 | Linux-hallinta            |
+| Hessu   | Hopo     |        5 | 2026-11-12 | Olio-ohjelmointi          |
+| Hessu   | Hopo     |        1 | 2026-11-10 | Tietokannat ja rajapinnat |
++---------+----------+----------+------------+---------------------------+
+11 rows in set (0.00 sec)
